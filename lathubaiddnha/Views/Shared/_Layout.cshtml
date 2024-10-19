@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/Content/Site.css" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer>
+    </footer>
+
+    <script src="~/Scripts/jquery-3.6.0.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

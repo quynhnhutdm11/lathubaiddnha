@@ -1,0 +1,70 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+}
+
+header {
+    background-color: #003366;
+    color: white;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    align-items: center;
+}
+
+.opening-hours {
+    font-size: 14px;
+}
+
+.search-bar {
+    display: flex;
+}
+
+    .search-bar input {
+        padding: 5px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+    }
+
+    .search-bar button {
+        padding: 5px 10px;
+        border: none;
+        background-color: #ffcc00;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+    }
+
+.user-options a {
+    margin-left: 15px;
+    color: white;
+    text-decoration: none;
+}
+
+.user-options select {
+    margin-left: 15px;
+}
+
+.logo {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.breadcrumb {
+    background-color: #ffcc00;
+    padding: 10px 20px;
+}
+
+.product-section {
+    background-color: #ffffcc;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 5px;
+}
+
+    .product-section h2 {
+        margin: 0;
+    }

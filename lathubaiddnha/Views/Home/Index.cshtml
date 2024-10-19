@@ -1,0 +1,177 @@
+﻿@model IEnumerable<lathubaiddnha.Models.SanPham>
+@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+    var doAn = Model.Where(s => s.LoaiSanPham == "doan").ToList();
+    var thucUong = Model.Where(s => s.LoaiSanPham == "thucuong").ToList();
+    <link rel="stylesheet" href="~/Content/trangchu.css">
+}
+
+@section Slider {
+    @Html.Action("Slider", "Home")
+}
+
+<div class="container">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="~/Images/lgo/logo.jpg" alt="Mini Stop Logo" />
+        </div>
+        <h2>Thông tin sản phẩm</h2>
+        <a href="#" onclick="showSection('doan'); return false;">Đồ ăn</a>
+        <a href="#" onclick="showSection('thucuong'); return false;">Thức uống</a>
+        <a href="#" onclick="showSection('tatCaSanPham'); return false;">Tất cả sản phẩm</a>
+        <h2>Các khuyến mãi và ưu đãi</h2>
+    </div>
+
+    <div class="content">
+        <div id="doan" class="product-section" style="display:none;">
+            <h3>Đồ ăn</h3>
+            <div class="product-container">
+                @foreach (var item in doAn)
+                {
+                    <div class="product-card" onclick="showDetail('@item.TenSanPham', '@item.MoTa', '@item.Gia', '@item.Hinh', @item.MaSanPham)">
+                        <img src="@item.Hinh" alt="@item.TenSanPham" />
+                        <h4>@item.TenSanPham</h4>
+                        <p class="price">Giá: @item.Gia</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div id="thucuong" class="product-section" style="display:none;">
+            <h3>Thức uống</h3>
+            <div class="product-container">
+                @foreach (var item in thucUong)
+                {
+                    <div class="product-card" onclick="showDetail('@item.TenSanPham', '@item.MoTa', '@item.Gia', '@item.Hinh', @item.MaSanPham)">
+                        <img src="@item.Hinh" alt="@item.TenSanPham" />
+                        <h4>@item.TenSanPham</h4>
+                        <p class="price">Giá: @item.Gia</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div id="tatCaSanPham" class="product-section" style="display:none;">
+            <h3>Tất cả sản phẩm</h3>
+            <div class="product-container">
+                @foreach (var item in Model)
+                {
+                    <div class="product-card" onclick="showDetail('@item.TenSanPham', '@item.MoTa', '@item.Gia', '@item.Hinh', @item.MaSanPham)">
+                        <img src="@item.Hinh" alt="@item.TenSanPham" />
+                        <h4>@item.TenSanPham</h4>
+                        <p class="price">Giá: @item.Gia</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div id="productDetail" style="display:none;">
+            <h3>Chi tiết sản phẩm</h3>
+            <img id="detailImage" src="" alt="" />
+            <h4 id="detailName"></h4>
+            <p id="detailDescription"></p>
+            <p id="detailPrice"></p>
+
+            <h4>Đánh giá sản phẩm</h4>
+            <form id="ratingForm">
+                <label for="sosao">Số sao:</label>
+                <select id="sosao" required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+                <br>
+                <label for="noidung">Nội dung đánh giá:</label>
+                <textarea id="noidung" rows="4" required></textarea>
+                <br>
+                <button type="submit">Gửi đánh giá</button>
+            </form>
+
+            <div id="reviewsContainer"></div>
+
+            <button onclick="hideDetail()">Đóng</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentProductId; // Biến để lưu ID sản phẩm hiện tại
+    let userId = 1; // ID người dùng thực tế, có thể lấy từ session hoặc cookie
+
+    function showSection(section) {
+        var sections = ['doan', 'thucuong', 'tatCaSanPham'];
+        sections.forEach(function (sec) {
+            document.getElementById(sec).style.display = 'none';
+        });
+        document.getElementById(section).style.display = 'block';
+    }
+
+    function showDetail(name, description, price, image, productId) {
+        document.getElementById('detailName').innerText = name;
+        document.getElementById('detailDescription').innerText = description;
+        document.getElementById('detailPrice').innerText = "Giá: " + price;
+        document.getElementById('detailImage').src = image;
+
+        currentProductId = productId; // Lưu ID sản phẩm hiện tại
+        document.getElementById('productDetail').style.display = 'block'; // Hiện chi tiết sản phẩm
+
+        fetchReviews(productId); // Tải đánh giá cho sản phẩm
+    }
+
+    function hideDetail() {
+        document.getElementById('productDetail').style.display = 'none'; // Ẩn chi tiết sản phẩm
+    }
+
+    // Xử lý gửi đánh giá
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('ratingForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const sosao = document.getElementById('sosao').value;
+            const noidung = document.getElementById('noidung').value;
+            const productId = currentProductId; // Lấy ID sản phẩm hiện tại
+
+            fetch('/QuanLyDanhGia/SubmitRating', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ maKH: userId, noidung: noidung, sosao: sosao, maSanPham: productId })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Kiểm tra phản hồi từ server
+                    if (data.success) {
+                        alert('Cảm ơn bạn đã đánh giá!');
+                        fetchReviews(productId); // Tải lại đánh giá
+                    } else {
+                        alert('Có lỗi xảy ra. Vui lòng thử lại!');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+
+        });
+    });
+
+    function fetchReviews(productId) {
+        fetch(`/QuanLyDanhGia/GetReviews?maSanPham=${productId}`)
+            .then(response => response.json())
+            .then(reviews => {
+                const reviewsContainer = document.getElementById('reviewsContainer');
+                reviewsContainer.innerHTML = '';
+                reviews.forEach(review => {
+                    reviewsContainer.innerHTML += `
+                    <div>
+                        <strong>Đánh giá (${review.sosao} sao):</strong>
+                        <p>${review.noidung}</p>
+                        <small>${new Date(review.ngayDanhGia).toLocaleString()}</small>
+                        ${review.PhanHoi ? `<p><strong>Phản hồi:</strong> ${review.PhanHoi}</p>` : ''}
+                    </div>
+                `;
+                });
+            });
+    }
+</script>

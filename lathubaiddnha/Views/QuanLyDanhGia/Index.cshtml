@@ -1,0 +1,66 @@
+﻿@model IEnumerable<lathubaiddnha.Models.DanhGia>
+
+<h2>Quản lý đánh giá</h2>
+<table>
+    <tr>
+        <th>Sản phẩm</th>
+        <th>Đánh giá</th>
+        <th>Sao</th>
+        <th>Ngày đánh giá</th>
+        <th>Phản hồi</th>
+        <th>Gửi phản hồi</th>
+    </tr>
+    @foreach (var review in Model)
+    {
+        <tr>
+            <td>
+                @if (review.SanPham != null)
+                {
+                    @review.SanPham.TenSanPham
+                }
+                else
+                {
+                    <text>N/A</text>
+                }
+            </td>
+
+            <td>@review.noidung</td>
+            <td>@review.sosao</td>
+            <td>
+                @if (review.ngayDanhGia.HasValue)
+                {
+                    @review.ngayDanhGia.Value.ToString("dd/MM/yyyy")
+                }
+                else
+                {
+                    <text>N/A</text>
+                }
+            </td>
+
+            
+        </tr>
+    }
+</table>
+
+<script>
+    function respondToReview(reviewId) {
+        const response = document.getElementById(`responseInput_${reviewId}`).value;
+        fetch('/Reviews/RespondToReview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ reviewId: reviewId, response: response })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Phản hồi đã được gửi!');
+                    location.reload(); // Có thể thay thế bằng việc tải lại phần đánh giá
+                } else {
+                    alert('Có lỗi xảy ra: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Lỗi:', error));
+    }
+</script>

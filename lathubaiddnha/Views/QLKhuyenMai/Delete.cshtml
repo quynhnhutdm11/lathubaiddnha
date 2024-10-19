@@ -1,0 +1,50 @@
+﻿@model lathubaiddnha.Models.KhuyenMai
+
+@{
+    ViewBag.Title = "Xóa Khuyến Mãi";
+}
+
+<h2>Xóa Khuyến Mãi</h2>
+
+<div>
+    <h4>Bạn có chắc chắn muốn xóa khuyến mãi này?</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Mã Khuyến Mãi:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.makhuyenmai)
+        </dd>
+        <dt>
+            Mô Tả:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.mota)
+        </dd>
+        <dt>
+            Thời Gian Hiệu Lực:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ngayKetThuc)
+        </dd>
+        <dd>
+            @Html.DisplayFor(model => model.ngayBatDau)
+        </dd>
+        <dt>
+            Mã Sản Phẩm Khuyến Mãi:
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.masanphamKM)
+        </dd>
+    </dl>
+
+    <h4>Bạn có chắc chắn muốn xóa sản phẩm này không?</h4>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.masanphamKM" />
+        <input type="submit" value="Xóa" class="btn btn-danger" />
+        @Html.ActionLink("Hủy", "Index", null, new { @class = "btn btn-secondary" })
+    }
+</div>
